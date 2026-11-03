@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 resource "aws_security_group" "windows_sg" {
-  name        = "windows-web-sg-tf-v2"
+  name_prefix = "windows-web-sg-"
   description = "Allow RDP and HTTP"
 
   ingress {
