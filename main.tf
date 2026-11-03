@@ -29,17 +29,17 @@ resource "aws_security_group" "windows_sg" {
 }
 
 resource "aws_instance" "web_server" {
-  ami           = "ami-055eb33c79b889b43" # Windows Server 2025 AMI
-  instance_type = "t3.micro"
-  key_name      = "windows-key"
+  ami             = "ami-055eb33c79b889b43" # Windows Server 2025 AMI
+  instance_type   = "t3.micro"
+  key_name        = "windows-key"
   security_groups = [aws_security_group.windows_sg.name]
 
-  user_data = <<-EOF
-              <powershell>
-              dism /online /enable-feature /featurename:IIS-WebServerRole /all
-              Set-Content -Path "C:\inetpub\wwwroot\index.html" -Value "<h1>Automated IIS via Terraform</h1>"
-              </powershell>
-              EOF
+  # External PowerShell script එක (Bootstrap-IIS.ps1) user_data ලෙස ඇතුළත් කිරීම
+  user_data = <<EOF
+<powershell>
+${file("${path.module}/scripts/Bootstrap-IIS.ps1")}
+</powershell>
+EOF
 
   tags = {
     Name = "Terraform-Windows-IIS"
